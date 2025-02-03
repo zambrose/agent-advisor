@@ -1,6 +1,7 @@
 "use client";
 
 import { FormEvent, useEffect, useMemo, useState } from "react";
+import Image from 'next/image';
 
 // --- Trending helper types and parser ---
 interface TrendingItem {
@@ -321,11 +322,14 @@ export default function ToolsPage() {
                     <td className="border border-gray-300 px-4 py-2">
                       <div className="flex items-center justify-center gap-2">
                         {item.icon && (
-                          <img
+                        <Image
                             src={item.icon}
                             alt={item.symbol}
-                            className="h-8 w-8"
-                          />
+                            width={32}
+                            height={32}
+                            className="object-contain"
+                            priority
+                        />
                         )}
                         <span>{item.symbol}</span>
                       </div>

@@ -2,6 +2,7 @@ import { NextResponse } from "next/server";
 import { openai } from "@ai-sdk/openai";
 import { generateText } from "ai";
 import { http } from "viem";
+
 import { createWalletClient } from "viem";
 import { privateKeyToAccount } from "viem/accounts";
 import { mode } from "viem/chains"; // This is your active chain (e.g., mode)
@@ -23,26 +24,20 @@ export async function POST(request: Request) {
 
   // Define the allowed tokens (ERC20 symbols) on the mode network.
   const allowedTokensList = [
-    "MODE",
-    "mBTC",
-    "rsETH",
-    "wrsETH",
-    "weETH",
-    "ezETH",
-    "STONE",
-    "USDC",
-    "USDT",
-    "weETH.mode",
-    "WETH",
-    "WBTC",
-    "UNI",
-    "SNX",
-    "LINK",
-    "DAI",
-    "BAL",
-    "AAVE",
+    {
+      decimals: 18,
+      symbol: "MODE",
+      name: "Mode",
+      chains: {
+        "34443": {
+          contractAddress:
+            "0xDfc7C877a950e49D2610114102175A06C2e3167a" as `0x${string}`,
+        },
+      },
+    },
   ];
-  const allowedTokens = allowedTokensList.join(", ");
+
+  const allowedTokens = allowedTokensList;
 
   // Set up the wallet.
   const account = privateKeyToAccount(
@@ -65,25 +60,41 @@ export async function POST(request: Request) {
   });
 
   // Retrieve on-chain balances for each allowed token.
-  const walletTokensRaw = await Promise.all(
-    allowedTokensList.map(async (tokenSymbol) => {
-      try {
-        // Query the balance for this token.
-        const balance = await tools.erc20.getBalance({
-          token: tokenSymbol,
-          address: account.address,
-        });
-        return { symbol: tokenSymbol, balance };
-      } catch (error) {
-        console.error(error);
-        // If the token is not deployed or another error occurs, return null.
-        return null;
-      }
-    })
-  );
+  if (!tools.erc20) {
+    throw new Error("ERC20 tool not initialized");
+  }
+
+const erc20Tool = tools.erc20 as unknown as {
+execute: (
+    args: {
+    token: `0x${string}`,
+    function: string,
+    args: unknown[]
+    },
+    options?: { messages?: unknown[]; abortSignal?: AbortSignal }
+) => Promise<bigint>
+};
+
+const CHAIN_ID = 34443; // Mode network chain ID
+
+const walletTokensRaw = await Promise.all(
+allowedTokensList.map(async (token) => {
+    try {
+    const balance = await erc20Tool.execute({
+        token: token.chains[CHAIN_ID].contractAddress,
+        function: "balanceOf",
+        args: [account.address]
+    }, {});
+    return { symbol: token.symbol, balance: Number(balance) };
+    } catch (error) {
+    console.error(error);
+    return null;
+    }
+})
+);
   const filteredWalletTokens = walletTokensRaw.filter(
-    (t) => t !== null && t.balance > 0
-  ) as { symbol: string; balance: number }[];
+    (t): t is { symbol: string; balance: number } => t !== null && t.balance > 0
+  );
 
   // Get the active network name from the chain object.
   const activeNetwork = mode.name || "Unknown Network";
