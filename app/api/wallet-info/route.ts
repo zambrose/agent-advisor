@@ -54,7 +54,7 @@ async function getWalletTokens(
   return { chainId: chainId.toString(), rpcUrl, tokens };
 }
 
-export async function GET(request: Request) {
+export async function GET() {
   const privateKey = process.env.WALLET_PRIVATE_KEY;
   if (!privateKey) {
     return NextResponse.json(

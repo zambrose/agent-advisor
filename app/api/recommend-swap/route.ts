@@ -75,6 +75,7 @@ export async function POST(request: Request) {
         });
         return { symbol: tokenSymbol, balance };
       } catch (error) {
+        console.error(error);
         // If the token is not deployed or another error occurs, return null.
         return null;
       }

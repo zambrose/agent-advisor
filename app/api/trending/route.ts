@@ -11,7 +11,7 @@ import { coingecko } from "@goat-sdk/plugin-coingecko";
 import { viem } from "@goat-sdk/wallet-viem";
 
 // This route does not require any input from the client.
-export async function POST(request: Request) {
+export async function POST() {
   const account = privateKeyToAccount(
     process.env.WALLET_PRIVATE_KEY as `0x${string}`
   );
