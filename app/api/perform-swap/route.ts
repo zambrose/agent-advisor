@@ -64,9 +64,9 @@ export async function POST(request: Request) {
 
   // Build a prompt that instructs the agent to perform a swap.
   const prompt = `User's wallet address: ${account.address}.
-Perform a swap from AAVE TO USDC using 5% of the user's AAVE balance. Ensure the swap takes place on the Mode chain with chain ID 34443. Ensure that we swap AAVE 0x7c6b91D9Be155A6Db01f749217d76fF02A7227F2 to USDC 0xd988097fB8612cC24eeC14542bC03424c656005f.
+Perform a swap of 0.01 AAVE TO USDC via kim. Ensure the swap takes place on the Mode chain with chain ID 34443. Ensure that we swap AAVE 0x7c6b91D9Be155A6Db01f749217d76fF02A7227F2 to USDC 0xd988097fB8612cC24eeC14542bC03424c656005f.
 USDC should be sent to the user's wallet address. Wallet address: ${account.address}.
-For the swap, please provide:
+For the swap, please provide if available:
   - The transaction hash,
   - The transaction receipt,
   - Detailed transaction parameters,

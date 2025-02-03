@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import Link from "next/link";
 
 interface SwapRecommendation {
   fromToken: string;
@@ -21,7 +22,7 @@ function parseSwapRecommendation(text: string): SwapRecommendation | null {
   return null;
 }
 
-export default function ToolsPage() {
+export default function Home() {
   // --- Swap Recommendation State ---
   const [timeHorizon, setTimeHorizon] = useState("5 min");
   const [swapRecommendation, setSwapRecommendation] =
@@ -87,9 +88,6 @@ export default function ToolsPage() {
     } catch (error: any) {
       console.error("Swap recommendation error:", error);
       let errorMsg = "Error fetching swap recommendation";
-
-      // Log error details for debugging
-      console.log("Error object:", error);
       if (error && typeof error === "object") {
         if (error.message) errorMsg += `: ${error.message}`;
         if (error.details) errorMsg += ` - ${JSON.stringify(error.details)}`;
@@ -116,14 +114,13 @@ export default function ToolsPage() {
       });
       const data = await response.json();
       if (!response.ok) {
-        throw data; // assume the error object includes toolName, toolCallId, cause, etc.
+        throw data;
       }
       setSwapExecutionResult(data.message || "Swap executed successfully.");
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
     } catch (error: any) {
       console.error("Swap execution error:", error);
       let errorMsg = "Error performing swap";
-      // Extract and append error properties on separate lines.
       if (error && typeof error === "object") {
         if (error.message) {
           errorMsg += `\nMessage: ${error.message}`;
@@ -135,7 +132,6 @@ export default function ToolsPage() {
           errorMsg += `\nTool Call ID: ${error.toolCallId}`;
         }
         if (error.cause) {
-          // Convert cause to a string (JSON.stringify if it's an object)
           const causeStr =
             typeof error.cause === "object"
               ? JSON.stringify(error.cause, null, 2)
@@ -265,12 +261,20 @@ export default function ToolsPage() {
               </button>
             </div>
             {swapExecutionResult && (
-              <p className="mt-2">
-                <strong>Swap Result:</strong> {swapExecutionResult}
-              </p>
+              <div className="mt-2 p-2 border border-red-400 bg-red-100">
+                <strong>Swap Result:</strong>
+                <pre className="whitespace-pre-wrap">{swapExecutionResult}</pre>
+              </div>
             )}
           </div>
         )}
+      </section>
+
+      {/* Additional Tools Link Section */}
+      <section className="mt-8">
+        <Link href="/tools" className="text-blue-500 underline">
+          Additional Tools &rarr;
+        </Link>
       </section>
     </main>
   );
