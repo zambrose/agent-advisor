@@ -263,7 +263,9 @@ export default function Home() {
             {swapExecutionResult && (
               <div className="mt-2 p-2 border border-red-400 bg-red-100">
                 <strong>Swap Result:</strong>
-                <pre className="whitespace-pre-wrap">{swapExecutionResult}</pre>
+                <pre className="whitespace-pre-wrap break-words">
+                  {swapExecutionResult}
+                </pre>
               </div>
             )}
           </div>
