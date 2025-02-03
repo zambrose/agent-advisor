@@ -17,9 +17,11 @@ async function getWalletTokens(
   await provider.ready;
 
   const network = await provider.getNetwork();
-  const chainId = network.chainId;
+  // chainId is a bigint in ethers v6, so we convert to string
+  const chainId = network.chainId.toString();
 
   const tokens = [];
+
   for (const tokenAddress of knownTokenAddresses) {
     try {
       const tokenContract = new ethers.Contract(
@@ -28,14 +30,18 @@ async function getWalletTokens(
         provider
       );
       const balance = await tokenContract.balanceOf(walletAddress);
-      const decimals = await tokenContract.decimals();
+      // decimals might be a bigint; convert to a normal number
+      const decimalsBigint = await tokenContract.decimals();
+      const decimals = Number(decimalsBigint);
       const symbol = await tokenContract.symbol();
-      if (balance.gt(0)) {
+
+      // Only add token if there's a nonzero balance (compare bigints via > 0n)
+      if (balance > 0n) {
         tokens.push({
           address: tokenAddress,
           symbol,
-          balance: ethers.formatUnits(balance, decimals),
-          decimals,
+          balance: ethers.formatUnits(balance, decimals), // => string
+          decimals, // => a normal number now
         });
       }
     } catch (error) {
@@ -43,15 +49,16 @@ async function getWalletTokens(
     }
   }
 
+  // Always include native chain balance (ETH)
   const nativeBalance = await provider.getBalance(walletAddress);
   tokens.unshift({
     address: "native",
     symbol: "ETH",
-    balance: ethers.formatEther(nativeBalance),
-    decimals: 18,
+    balance: ethers.formatEther(nativeBalance), // => string
+    decimals: 18, // => normal number
   });
 
-  return { chainId: chainId.toString(), rpcUrl, tokens };
+  return { chainId, rpcUrl, tokens };
 }
 
 export async function GET() {
@@ -62,6 +69,7 @@ export async function GET() {
       { status: 400 }
     );
   }
+
   const wallet = new ethers.Wallet(privateKey);
   const walletAddress = wallet.address;
 
@@ -73,11 +81,19 @@ export async function GET() {
     );
   }
 
-  const tokensList = process.env.ERC20_TOKEN_ADDRESSES
-    ? process.env.ERC20_TOKEN_ADDRESSES.split(",").map((s) => s.trim())
-    : [];
+  // Example tokens
+  const MODE_ADDRESS = "0xDfc7C877a950e49D2610114102175A06C2e3167a";
+  const USDC_ADDRESS = "0xd988097fb8612cc24eeC14542bC03424c656005f";
+  const AAVE_ADDRESS = "0x7c6b91D9Be155A6Db01f749217d76fF02A7227F2";
 
-  const walletInfo = await getWalletTokens(walletAddress, rpcUrl, tokensList);
+  const knownTokenAddresses = [USDC_ADDRESS, AAVE_ADDRESS, MODE_ADDRESS];
+  const walletInfo = await getWalletTokens(
+    walletAddress,
+    rpcUrl,
+    knownTokenAddresses
+  );
+
+  console.log("walletInfo", walletInfo);
 
   return NextResponse.json({
     walletAddress,
