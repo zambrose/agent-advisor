@@ -9,19 +9,31 @@
     "lint": "next lint"
   },
   "dependencies": {
+    "@ai-sdk/openai": "^1.1.9",
+    "@goat-sdk/adapter-vercel-ai": "^0.2.7",
+    "@goat-sdk/core": "^0.4.6",
+    "@goat-sdk/plugin-allora": "^0.1.4",
+    "@goat-sdk/plugin-coingecko": "^0.2.7",
+    "@goat-sdk/plugin-erc20": "^0.2.9",
+    "@goat-sdk/plugin-kim": "^0.1.9",
+    "@goat-sdk/wallet-evm": "^0.2.7",
+    "@goat-sdk/wallet-viem": "^0.2.7",
+    "ai": "^4.1.16",
+    "ethers": "^6.13.5",
+    "next": "15.1.6",
     "react": "^19.0.0",
     "react-dom": "^19.0.0",
-    "next": "15.1.6"
+    "viem": "^2.22.17"
   },
   "devDependencies": {
-    "typescript": "^5",
+    "@eslint/eslintrc": "^3",
     "@types/node": "^20",
     "@types/react": "^19",
     "@types/react-dom": "^19",
-    "postcss": "^8",
-    "tailwindcss": "^3.4.1",
     "eslint": "^9",
     "eslint-config-next": "15.1.6",
-    "@eslint/eslintrc": "^3"
+    "postcss": "^8",
+    "tailwindcss": "^3.4.1",
+    "typescript": "^5"
   }
 }

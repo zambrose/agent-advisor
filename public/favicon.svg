@@ -1,0 +1,36 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" width="64" height="64">
+  <!-- Define gradients -->
+  <defs>
+    <linearGradient id="mainGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#8B5CF6" /> <!-- Purple -->
+      <stop offset="100%" style="stop-color:#EF4444" /> <!-- Red -->
+    </linearGradient>
+    <linearGradient id="overlayGradient" x1="100%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" style="stop-color:#C084FC;stop-opacity:0.6" /> <!-- Lighter purple -->
+      <stop offset="100%" style="stop-color:#FB7185;stop-opacity:0.4" /> <!-- Lighter red -->
+    </linearGradient>
+  </defs>
+
+  <!-- Base shape - modern hexagon, scaled up -->
+  <path d="M32 4
+           L56 18
+           L56 46
+           L32 60
+           L8 46
+           L8 18
+           Z"
+        fill="url(#mainGradient)" />
+
+  <!-- Overlay shape for depth -->
+  <path d="M32 12
+           L48 22
+           L48 42
+           L32 52
+           L16 42
+           L16 22
+           Z"
+        fill="url(#overlayGradient)" />
+
+  <!-- Center dot for focus -->
+  <circle cx="32" cy="32" r="4" fill="#FFFFFF" opacity="0.9" />
+</svg>
